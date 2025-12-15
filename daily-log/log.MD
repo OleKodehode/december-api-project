@@ -1,7 +1,5 @@
 # Dagslogg for prosjekt uke - Mellom 15 til 19 Desember + 29-30 Desember
 
---
-
 ## 15 Desember
 
 Første dagen gikk mest ut på å velge hvilken API å gå for. Valgte til slutt å gå for nr 2 med litt modifikasjon.
