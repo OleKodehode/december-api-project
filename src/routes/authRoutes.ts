@@ -64,4 +64,19 @@ router.get("/refresh", (req, res) => {
   res.status(200).json({ accessToken: newAccessToken });
 });
 
+router.post("/logout", (req, res) => {
+  const refreshToken = req.headers["x-refreshtoken"];
+  const accessToken = req.headers["authorization"];
+
+  if (!refreshToken || !accessToken) {
+    return res.status(401).json({
+      message: "Both refresh and access tokens are required to logout.",
+    });
+  }
+
+  // Just to get green state.
+  // TODO: Verify tokens and remove SID.
+  res.status(204).send();
+});
+
 export default router;
