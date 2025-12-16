@@ -5,6 +5,14 @@ import authRoutes from "./routes/authRoutes";
 const app = express();
 const PORT = Number(process.env.PORT) || 8001;
 
+const secrets = process.env.ACCESS_SECRET && process.env.REFRESH_SECRET;
+
+if (!secrets) {
+  throw new Error(
+    "Secrets needed for JWT is not set - Please make a .env file with the required secrets."
+  );
+}
+
 app.use(express.json());
 
 app.get("/v1/health", (req: Request, res: Response) => {

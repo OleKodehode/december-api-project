@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
@@ -7,9 +8,12 @@ const router = Router();
 // Temp in-memory sessions
 const activeSessions = new Set<string>();
 
-// Dev testing - Replace with env variables later
-const ACCESS_SECRET = "dev-access";
-const REFRESH_SECRET = "dev-refresh";
+const ACCESS_SECRET = process.env.ACCESS_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+
+if (!ACCESS_SECRET || !REFRESH_SECRET) {
+  throw new Error("Missing JWT Secrets in environment variables.");
+}
 
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
