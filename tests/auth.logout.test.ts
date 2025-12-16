@@ -25,7 +25,7 @@ describe("POST /v1/auth/logout", () => {
     expect(res.body).toEqual({}); // No content within body.
   });
 
-  it("should return 401 if tokens weren't supplied.", async () => {
+  it("should return 401 if tokens weren't supplied", async () => {
     const res = await request(app).post("/v1/auth/logout");
 
     expect(res.status).toBe(401);

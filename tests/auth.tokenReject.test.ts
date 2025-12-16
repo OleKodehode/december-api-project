@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../src/server";
 
-describe("Token should be rejected after logout.", () => {
+describe("Token should be rejected after logout", () => {
   let accessToken: string;
   let refreshToken: string;
 
@@ -16,7 +16,7 @@ describe("Token should be rejected after logout.", () => {
     refreshToken = loginRes.body.refreshToken;
   });
 
-  it("allows access to protected route before logout.", async () => {
+  it("allows access to protected route before logout", async () => {
     const res = await request(app)
       .get("/v1/protected")
       .set("Authorization", `Bearer ${accessToken}`);
@@ -25,7 +25,7 @@ describe("Token should be rejected after logout.", () => {
     expect(res.body.message).toBe("You are authenticated");
   });
 
-  it("rejects access to protected route after logout.", async () => {
+  it("rejects access to protected route after logout", async () => {
     // Initiate logout first.
     const logoutRes = await request(app)
       .post("/v1/auth/logout")
@@ -40,11 +40,11 @@ describe("Token should be rejected after logout.", () => {
 
     expect(protectedRes.status).toBe(401);
     expect(protectedRes.body.message).toContain(
-      "Session invalid or already revoked."
+      "Session invalid or already revoked"
     );
   });
 
-  it("rejects refresh tokens after logout.", async () => {
+  it("rejects refresh tokens after logout", async () => {
     await request(app)
       .post("/v1/auth/logout")
       .set("X-RefreshToken", refreshToken);

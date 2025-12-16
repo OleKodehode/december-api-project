@@ -31,7 +31,7 @@ describe("GET /v1/auth/refresh", () => {
     expect(res.status).toBe(401);
   });
 
-  it("should return 401 when there are no X-RefreshToken header.", async () => {
+  it("should return 401 when there are no X-RefreshToken header", async () => {
     const res = await request(app).get("/v1/auth/refresh");
 
     expect(res.status).toBe(401);

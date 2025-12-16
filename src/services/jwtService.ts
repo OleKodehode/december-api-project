@@ -6,7 +6,7 @@ const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
 // A check is ran on server start to check for this, but to make typescript happy, check it here too
 if (!ACCESS_SECRET || !REFRESH_SECRET) {
-  throw new Error("Couldn't find secrets in the dotenv file.");
+  throw new Error("Couldn't find secrets in the dotenv file");
 }
 
 export interface TokenPayLoad {

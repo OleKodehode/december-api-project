@@ -1,7 +1,10 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-const SESSIONS_FILE = path.join(__dirname, "../data/activeSessions.json");
+const SESSIONS_FILE = path.resolve(
+  process.cwd(),
+  "src/data/activeSessions.json"
+);
 
 // In-memory caching for speed
 let activeSessions: Set<string> = new Set();
@@ -10,9 +13,9 @@ try {
   const data = readFileSync(SESSIONS_FILE, "utf8");
   const loaded = JSON.parse(data);
   activeSessions = new Set(loaded);
-  console.log(`Loaded ${loaded.length} active sessions from file.`);
+  console.log(`Loaded ${loaded.length} active sessions from file`);
 } catch (err) {
-  console.log("Couldn't find any existing session files - Starting fresh.");
+  console.log("Couldn't find any existing session files - Starting fresh");
   console.error("Error:", err);
   activeSessions = new Set();
 }

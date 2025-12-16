@@ -9,3 +9,5 @@ Backlog API - API som kan lage en oversikt over filmer, serier og spill man har 
 Dagen gikk mest på å sette meg litt mer inn i TDD og oppsett av prosjektet. Litt lesing og research på nett og via LLM.
 
 Slo meg litt fast til slutt med Jest og TypeScript. Må få Jest til å virke ordentlig med typescript.
+
+## 16 Desember
