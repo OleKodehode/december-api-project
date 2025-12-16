@@ -1,8 +1,9 @@
+import "dotenv/config";
 import express, { type Request, type Response } from "express";
-import authRoutes from "./routes/authRoutes.ts";
+import authRoutes from "./routes/authRoutes";
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = Number(process.env.PORT) || 8001;
 
 app.use(express.json());
 

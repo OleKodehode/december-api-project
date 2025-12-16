@@ -8,7 +8,7 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
-    "target": "esnext",
+    "target": "es2020",
     "types": [],
 
     // For nodejs:
@@ -17,7 +17,7 @@
     // and npm install -D @types/node
 
     // Other Outputs
-    "sourceMap": true,
+    // "sourceMap": true,
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
@@ -39,10 +39,10 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowArbitraryExtensions": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
