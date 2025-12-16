@@ -44,4 +44,24 @@ router.post("/login", (req, res) => {
   res.status(200).json({ accessToken, refreshToken });
 });
 
+router.get("/refresh", (req, res) => {
+  const refreshToken = req.headers["x-refreshtoken"];
+
+  if (!refreshToken || typeof refreshToken !== "string") {
+    return res.status(401).json({ message: "Refresh token required." });
+  }
+
+  // replace check later to check if token is valid or not instead of hardcoded like this.
+  if (refreshToken === "invalid-token") {
+    return res.status(401).json({ message: "Invalid refresh token." });
+  }
+
+  // TODO: Verify JWT and check SID.
+  // For TDD development - issuing just a new access token
+  const payload = { userId: "user-123", sid: "dev-sid" }; // dev purposes only
+  const newAccessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
+
+  res.status(200).json({ accessToken: newAccessToken });
+});
+
 export default router;
