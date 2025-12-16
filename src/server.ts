@@ -1,5 +1,5 @@
 import express, { type Request, type Response } from "express";
-import authRoutes from "./routes/authRoutes.js";
+import authRoutes from "./routes/authRoutes.ts";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
