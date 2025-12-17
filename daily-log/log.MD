@@ -20,3 +20,15 @@ og deretter å få mer av authentication bygd ut.
 Takk til veileder for hjelp med tsconfig og jest.
 
 Begynner å nærme meg ferdig med authentication delen, slik at jeg kan starte på endpoints som kreves for at APIen skal funke som den skal.
+
+## 17 Desember
+
+Gjorde ferdig Authentication delen av koden.
+
+Begynt litt på backlog endpoint.
+
+Har kommet opp til 21 tester over 8 test suites så langt.
+
+Jeg føler jeg går over en del ting som jeg ikke har så mye kunnskap om i forkant, men føler jeg skjønner hva ting gjør ihvertfall.
+
+forhåpentligvis så er det innafor "Best Practice".
