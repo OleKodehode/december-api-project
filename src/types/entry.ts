@@ -2,13 +2,14 @@ export type EntryType = "movie" | "series" | "game";
 
 export type Status = "planned" | "watching" | "completed" | "dropped";
 
+// optional fields will be filled with null by zod.
 export interface BaseEntry {
   id: string;
   title: string;
   type: EntryType;
   status: Status;
   rating: number | null; // 1-10 or null if not rated (yet)
-  notes?: string; // if the user wants to add notes to an entry - Optional
+  notes?: string | null; // if the user wants to add notes to an entry - Optional
   userId: string;
   createdAt: string; // ISO string
   updatedAt: string; // ^
@@ -16,22 +17,22 @@ export interface BaseEntry {
 
 export interface MovieEntry extends BaseEntry {
   type: "movie";
-  releaseYear?: number;
-  director?: string;
+  releaseYear?: number | null;
+  director?: string | null;
 }
 
 export interface SeriesEntry extends BaseEntry {
   type: "series";
-  releaseYear?: number;
-  currentSeason?: number;
-  currentEpisode?: number;
+  releaseYear?: number | null;
+  currentSeason?: number | null;
+  currentEpisode?: number | null;
 }
 
 export interface GameEntry extends BaseEntry {
   type: "game";
-  releaseYear?: number;
-  platform?: string | string[];
-  playtime?: number; // Playtime in hours
+  releaseYear?: number | null;
+  platform?: string | string[] | null;
+  playtime?: number | null; // Playtime in hours
 }
 
 export type Entry = MovieEntry | SeriesEntry | GameEntry;
