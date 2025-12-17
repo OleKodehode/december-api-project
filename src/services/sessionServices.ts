@@ -16,7 +16,6 @@ try {
   console.log(`Loaded ${loaded.length} active sessions from file`);
 } catch (err) {
   console.log("Couldn't find any existing session files - Starting fresh");
-  console.error("Error:", err);
   activeSessions = new Set();
 }
 

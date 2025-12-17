@@ -8,32 +8,11 @@ import {
   hasSession,
   removeSession,
 } from "../services/sessionServices";
+import { handleLogin } from "../controllers/authController";
 
 const router = Router();
 
-router.post("/login", (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ message: "Username and Password is required" });
-  }
-
-  // test authentication to make testing pass for now
-  if (username !== "test" || password !== "password") {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  const userId = "user-123";
-  const sid = uuidv4();
-
-  addSession(sid);
-
-  const tokens = issueTokens({ userId, sid });
-
-  res.status(200).json(tokens);
-});
+router.post("/login", handleLogin);
 
 router.get("/refresh", (req, res) => {
   const refreshToken = req.headers["x-refreshtoken"];

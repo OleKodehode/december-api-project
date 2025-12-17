@@ -9,7 +9,7 @@ describe("Token should be rejected after logout", () => {
     // Fresh login for each test.
     const loginRes = await request(app)
       .post("/v1/auth/login")
-      .send({ username: "test", password: "password" });
+      .send({ username: "Test", password: "TestPassword123" });
 
     expect(loginRes.status).toBe(200);
     accessToken = loginRes.body.accessToken;

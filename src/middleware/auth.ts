@@ -35,7 +35,6 @@ export const authenticate = (
     req.user = { userId: payload.userId, sid: payload.sid };
     next();
   } catch (err) {
-    console.error("Error during token verification:", err);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };

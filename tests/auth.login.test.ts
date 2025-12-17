@@ -5,7 +5,7 @@ describe("POST /v1/auth/login", () => {
   it("should return 200 and tokens when provided with valid credentials", async () => {
     const res = await request(app)
       .post("/v1/auth/login")
-      .send({ username: "test", password: "password" });
+      .send({ username: "Test", password: "TestPassword123" });
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("accessToken");

@@ -7,7 +7,7 @@ let refreshToken: string = "";
 beforeAll(async () => {
   const loginRes = await request(app)
     .post("/v1/auth/login")
-    .send({ username: "test", password: "password" });
+    .send({ username: "Test", password: "TestPassword123" });
 
   refreshToken = loginRes.body.refreshToken;
 });
