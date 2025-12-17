@@ -7,7 +7,7 @@ import type {
   CreateEntryInput,
 } from "../schemas/entrySchema";
 
-const BACKLOG_FILE = path.resolve(process.cwd(), "data/backlog.json");
+const BACKLOG_FILE = path.resolve(process.cwd(), "src/data/backlog.json");
 
 let entries: Entry[] = [];
 

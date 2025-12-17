@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { type Request, type Response } from "express";
 import authRoutes from "./routes/authRoutes";
+import backlogRoutes from "./routes/backlogRoutes";
 import { authenticate } from "./middleware/auth";
 
 const app = express();
@@ -21,6 +22,7 @@ app.get("/v1/health", (req: Request, res: Response) => {
 });
 
 app.use("/v1/auth", authRoutes);
+app.use("/v1/entries", backlogRoutes);
 
 app.get("/v1/protected", authenticate, (req: Request, res: Response) => {
   res.json({ message: "You are authenticated", user: req.user });
