@@ -41,14 +41,7 @@ describe("Test to make sure one user logging out doesn't interfer with other use
   });
 
   it("logging out one user revokes only that user's token", async () => {
-    const testTokens = userTokens.get("Test");
-
-    if (!testTokens) {
-      // This shouldn't trigger.
-      throw new Error(
-        "Something went wrong with getting the token for the user Test"
-      );
-    }
+    const testTokens = userTokens.get("Test")!;
 
     // Test user is logged out
     const logoutRes = await request(app)
