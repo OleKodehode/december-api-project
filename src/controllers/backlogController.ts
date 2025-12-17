@@ -6,7 +6,7 @@ export const listEntries = (req: Request, res: Response) => {
 
   if (!userId)
     return res
-      .status(400)
+      .status(401)
       .json({ message: "User object with userId is required." });
 
   const userEntries = getUserEntries(userId);

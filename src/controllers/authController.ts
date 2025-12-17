@@ -1,8 +1,14 @@
+import "dotenv/config";
 import type { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { issueTokens } from "../services/jwtService";
-import { addSession } from "../services/sessionServices";
-import { findUsersByUsername } from "../services/userService";
+import { issueTokens, verifyRefreshToken } from "../services/jwtService";
+import {
+  addSession,
+  hasSession,
+  removeSession,
+} from "../services/sessionServices";
+import { findUserByUsername } from "../services/userService";
 
 export const handleLogin = (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -11,7 +17,7 @@ export const handleLogin = (req: Request, res: Response) => {
     return res.status(400).json({ message: "Username and Password required." });
   }
 
-  const user = findUsersByUsername(username);
+  const user = findUserByUsername(username);
 
   if (!user || user.password !== password) {
     return res.status(401).json({ message: "Invalid credentials" });
@@ -21,9 +27,49 @@ export const handleLogin = (req: Request, res: Response) => {
 
   addSession(sid);
 
-  const tokens = issueTokens({ userId: user.userid, sid });
+  const tokens = issueTokens({ userId: user.userId, sid });
 
   res.status(200).json(tokens);
 };
 
-// TODO: Add refresh and logout - Testing to see if login still works as expected first.
+export const handleRefresh = (req: Request, res: Response) => {
+  const refreshToken = req.headers["x-refreshtoken"];
+
+  if (typeof refreshToken !== "string") {
+    return res.status(401).json({ message: "Refresh token must be a string" });
+  }
+
+  try {
+    const payload = verifyRefreshToken(refreshToken);
+
+    if (!hasSession(payload.sid)) {
+      return res.status(401).json({ message: "Session revoked" });
+    }
+
+    const newAccessToken = jwt.sign(
+      { userId: payload.userId, sid: payload.sid },
+      process.env.ACCESS_SECRET!, // This should have been checked by now to exist
+      { expiresIn: "15m" }
+    );
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.status(401).json({ message: "Invalid refresh token" });
+  }
+};
+
+export const handleLogout = (req: Request, res: Response) => {
+  const refreshToken = req.headers["x-refreshtoken"];
+
+  if (typeof refreshToken !== "string") {
+    return res.status(401).json({ message: "Refresh token required" });
+  }
+
+  try {
+    const payload = verifyRefreshToken(refreshToken);
+    removeSession(payload.sid);
+    res.status(204).send();
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};

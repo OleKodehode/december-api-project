@@ -16,7 +16,7 @@ describe("POST /v1/auth/login", () => {
       expect(typeof res.body.accessToken).toBe("string");
       expect(typeof res.body.refreshToken).toBe("string");
 
-      // Decode token to check if userid matches the expected userid
+      // Decode token to check if userId matches the expected userId
       // if I'm not mistaken, JWTs are encoded by default with base64Url
       const payload = JSON.parse(
         Buffer.from(res.body.accessToken.split(".")[1], "base64").toString()
