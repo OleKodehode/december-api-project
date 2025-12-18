@@ -32,3 +32,13 @@ Har kommet opp til 21 tester over 8 test suites så langt.
 Jeg føler jeg går over en del ting som jeg ikke har så mye kunnskap om i forkant, men føler jeg skjønner hva ting gjør ihvertfall.
 
 forhåpentligvis så er det innafor "Best Practice".
+
+## 18 Desember
+
+Har arbeidet med å legge til Post og Patch på endpointet entries idag.
+
+Hadde forsåvidt ikke noen store problemer med å få til Post.
+
+Men sleit litt med Patch og schemas, har også noe vansker med at json filene ikke blir reset'a som forventa etter tester.
+
+Må få fikset dette imorgen.
