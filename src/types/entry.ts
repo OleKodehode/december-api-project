@@ -8,7 +8,7 @@ export interface BaseEntry {
   title: string;
   type: EntryType;
   status: Status;
-  rating: number | null; // 1-10 or null if not rated (yet)
+  rating?: number | null; // 1-10 or null if not rated (yet)
   notes?: string | null; // if the user wants to add notes to an entry - Optional
   userId: string;
   createdAt: string; // ISO string
@@ -32,7 +32,7 @@ export interface GameEntry extends BaseEntry {
   type: "game";
   releaseYear?: number | null;
   platform?: string | string[] | null;
-  playtime?: number | null; // Playtime in hours
+  playTime?: number | null; // Playtime in hours
 }
 
 export type Entry = MovieEntry | SeriesEntry | GameEntry;

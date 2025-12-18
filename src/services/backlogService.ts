@@ -2,10 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import { type Entry } from "../types/entry";
-import type {
-  UpdateEntryInput,
-  CreateEntryInput,
-} from "../schemas/entrySchema";
+import type { CreateEntryInput } from "../schemas/entrySchema";
 
 const BACKLOG_FILE = path.resolve(process.cwd(), "src/data/backlog.json");
 
@@ -48,7 +45,6 @@ export const createEntry = (input: CreateEntryInput, userId: string): Entry => {
     userId,
     createdAt: now,
     updatedAt: now,
-    rating: input.rating ?? null,
   };
 
   entries.push(newEntry);
@@ -66,7 +62,7 @@ export const findEntryById = (
 
 export const updateEntry = (
   id: string,
-  input: UpdateEntryInput,
+  input: Partial<Entry>,
   userId: string
 ): Entry | null => {
   const entry = findEntryById(id, userId);

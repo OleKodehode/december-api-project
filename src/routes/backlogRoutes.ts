@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth";
-import { createEntry, listEntries } from "../controllers/backlogController";
+import {
+  createEntry,
+  listEntries,
+  updateEntry,
+} from "../controllers/backlogController";
 import { normalizeType } from "../middleware/normalizeType";
 import { validateEntry } from "../middleware/validateEntry";
 import { CreateEntrySchema } from "../schemas/entrySchema";
@@ -14,6 +18,8 @@ router.get("/", listEntries);
 
 router.post("/", normalizeType, validateEntry(CreateEntrySchema), createEntry);
 
-// POST, PATCH, DELETE later.
+router.patch("/:id", updateEntry);
+
+// DELETE later.
 
 export default router;

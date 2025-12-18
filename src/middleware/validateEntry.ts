@@ -8,7 +8,7 @@ export const validateEntry = (schema: ZodType) => {
     if (!result.success) {
       return res.status(400).json({
         message: "Validation of entry failed",
-        errors: result.error.format(),
+        errors: result.error,
       });
     }
 
