@@ -109,7 +109,6 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .send(caseEntry);
 
-    console.log(res.body);
     expect(res.body.type).toBe("movie");
     expect(res.status).toBe(201);
   });
