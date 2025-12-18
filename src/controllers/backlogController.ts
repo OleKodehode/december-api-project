@@ -37,9 +37,11 @@ export const createEntry = (req: Request, res: Response) => {
   }
 
   const input = req.body;
+  input.type = input.type.toLowerCase().trim();
 
   const entry = createEntryService(input, userId);
 
+  // display games as playing instead of watching
   const displayedEntry = {
     ...entry,
     status:

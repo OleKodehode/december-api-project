@@ -94,7 +94,7 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .send(invalidEntry);
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toContain("Title");
+    expect(res.body.message).toContain("Validation of entry failed");
   });
 
   it("should return 201 even if type is in all caps (case insensitive test)", async () => {
@@ -109,8 +109,9 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .send(caseEntry);
 
-    expect(res.status).toBe(201);
+    console.log(res.body);
     expect(res.body.type).toBe("movie");
+    expect(res.status).toBe(201);
   });
 
   it("should return 400 if the type is invalid", async () => {
@@ -125,7 +126,6 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .send(invalidEntry);
 
-    console.log(res.body);
     expect(res.status).toBe(400);
   });
 });
