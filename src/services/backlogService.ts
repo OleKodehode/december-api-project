@@ -29,7 +29,7 @@ try {
 
 const save = () => {
   try {
-    writeFileSync(BACKLOG_FILE, JSON.stringify(entries, null, 2));
+    writeFileSync(BACKLOG_FILE, JSON.stringify(entries, null, 2) + "\n"); // new line to match formatting
   } catch (err) {
     console.error("Failed to save backlog:", err);
   }

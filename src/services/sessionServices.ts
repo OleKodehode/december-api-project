@@ -21,7 +21,7 @@ try {
 
 const saveSessions = () => {
   try {
-    writeFileSync(SESSIONS_FILE, JSON.stringify([...activeSessions]));
+    writeFileSync(SESSIONS_FILE, JSON.stringify([...activeSessions]) + "\n"); // new line to match formatting
   } catch (err) {
     console.error("Failed to save sessions:", err);
   }
