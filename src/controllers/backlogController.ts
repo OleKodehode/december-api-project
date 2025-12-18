@@ -37,7 +37,6 @@ export const createEntry = (req: Request, res: Response) => {
   }
 
   const input = req.body;
-  input.type = input.type.toLowerCase().trim();
 
   const entry = createEntryService(input, userId);
 
