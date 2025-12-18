@@ -96,4 +96,36 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
     expect(res.status).toBe(400);
     expect(res.body.message).toContain("Title");
   });
+
+  it("should return 201 even if type is in all caps (case insensitive test)", async () => {
+    const caseEntry = {
+      type: "MOVIE",
+      title: "Test Movie",
+      status: "watching",
+    };
+
+    const res = await request(app)
+      .post("/v1/entries")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(caseEntry);
+
+    expect(res.status).toBe(201);
+    expect(res.body.type).toBe("movie");
+  });
+
+  it("should return 400 if the type is invalid", async () => {
+    const invalidEntry = {
+      type: "boardgame",
+      title: "Monopoly",
+      status: "watching",
+    };
+
+    const res = await request(app)
+      .post("/v1/entries")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(invalidEntry);
+
+    console.log(res.body);
+    expect(res.status).toBe(400);
+  });
 });
