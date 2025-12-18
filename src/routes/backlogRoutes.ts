@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth";
-import { listEntries } from "../controllers/backlogController";
+import { createEntry, listEntries } from "../controllers/backlogController";
 
 const router = Router();
 
@@ -8,6 +8,8 @@ const router = Router();
 router.use(authenticate);
 
 router.get("/", listEntries);
+
+router.post("/", createEntry);
 
 // POST, PATCH, DELETE later.
 

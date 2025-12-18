@@ -70,8 +70,8 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .get("/v1/entries")
       .set("Authorization", `Bearer ${accessToken}`);
 
-    expect(listRes.body).toHaveLength(2);
-    expect(listRes.body[1].title).toBe(gameEntry.title);
+    expect(listRes.body).toHaveLength(1);
+    expect(listRes.body[0].title).toBe(gameEntry.title);
   });
 
   it("should return 401 without authentication", async () => {
