@@ -81,4 +81,19 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
 
     expect(res.status).toBe(401);
   });
+
+  it("should return 400 for invalid data (missing title)", async () => {
+    const invalidEntry = {
+      type: "movie",
+      status: "completed",
+    };
+
+    const res = await request(app)
+      .post("/v1/entries")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(invalidEntry);
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toContain("Title");
+  });
 });

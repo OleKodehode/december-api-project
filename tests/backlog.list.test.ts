@@ -5,7 +5,7 @@ import type { Entry } from "../src/types/entry";
 
 describe("GET /v1/entries - List a user's entries (Protected)", () => {
   let accessToken: string;
-  const testUser = validUsers[0];
+  const testUser = validUsers[2];
 
   beforeEach(async () => {
     const loginRes = await request(app)
