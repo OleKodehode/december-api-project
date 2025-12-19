@@ -42,3 +42,17 @@ Hadde forsåvidt ikke noen store problemer med å få til Post.
 Men sleit litt med Patch og schemas, har også noe vansker med at json filene ikke blir reset'a som forventa etter tester.
 
 Må få fikset dette imorgen.
+
+## 19 Desember
+
+Har endelig fått orden på Jest og noen problemer med types, forhåpentligvis etter best practices/industry standards.
+
+La til Delete endpoint også, i tillegg til get by id. Så klart tester for det også.
+
+Begynner å nærme meg slutten på dette nå føler jeg.
+
+Blir å prøve og sette opp Swagger eller lignende, og se over koden sånn ellers etter ting som kan forbedres.
+
+## 22 Desember
+
+Bortreist for jula på denne dagen. Beskjed har blitt gitt til veileder om det.
