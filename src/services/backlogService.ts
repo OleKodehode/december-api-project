@@ -3,8 +3,12 @@ import path from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import { type Entry } from "../types/entry";
 import type { CreateEntryInput } from "../schemas/entrySchema";
+import { fileURLToPath } from "node:url";
 
-const BACKLOG_FILE = path.resolve(process.cwd(), "src/data/backlog.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const BACKLOG_FILE = path.join(__dirname, "../data/backlog.json");
 
 let entries: Entry[] = [];
 
@@ -25,6 +29,7 @@ try {
 }
 
 const save = () => {
+  // console.log("entries:", entries, "\n", new Date().toISOString());
   try {
     writeFileSync(BACKLOG_FILE, JSON.stringify(entries, null, 2) + "\n"); // new line to match formatting
   } catch (err) {
@@ -62,17 +67,13 @@ export const findEntryById = (
 
 export const updateEntry = (
   id: string,
-  input: Partial<Entry>,
+  input: Entry,
   userId: string
 ): Entry | null => {
   const entry = findEntryById(id, userId);
   if (!entry) return null;
 
-  Object.assign(entry, {
-    ...input,
-    updatedAt: new Date().toISOString(),
-  });
-
+  Object.assign(entry, input);
   save();
   return entry;
 };

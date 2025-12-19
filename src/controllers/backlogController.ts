@@ -7,6 +7,7 @@ import {
 } from "../services/backlogService";
 import { requireUserId } from "../utils/authHelper";
 import { updateSchemas } from "../schemas/entrySchema";
+import type { Entry, GameEntry, MovieEntry, SeriesEntry } from "../types/entry";
 
 export const listEntries = (req: Request, res: Response) => {
   const userId = requireUserId(req, res);
@@ -56,10 +57,6 @@ export const updateEntry = (req: Request, res: Response) => {
   }
 
   const schema = updateSchemas[existingEntry.type];
-  if (!schema) {
-    // Ideally shouldn't be called
-    return res.status(500).json({ message: "Invalid entry type" });
-  }
 
   const result = schema.safeParse(req.body);
   if (!result.success) {
@@ -69,7 +66,9 @@ export const updateEntry = (req: Request, res: Response) => {
     });
   }
 
-  const updated = updateEntryService(id, result.data, userId);
+  const updatedData = mergeEntryUpdate(existingEntry, result.data);
+
+  const updated = updateEntryService(id, updatedData, userId);
 
   if (!updated) {
     return res.status(404).json({ message: "Entry not found" }); // Shouldn't happen but you never know
@@ -86,6 +85,75 @@ export const updateEntry = (req: Request, res: Response) => {
   res.status(200).json(displayed);
 };
 
-/*
-TODO: Add more functions to handle the other backlog endpoints
-*/
+// type guard
+function isDefined<T>(value: T | undefined): value is T {
+  return value !== undefined;
+}
+
+function mergeEntryUpdate(
+  existing: Entry,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  update: any // This will be processed within the function
+): Entry {
+  const updated: Entry = {
+    ...existing,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (isDefined(update.title)) updated.title = update.title;
+  if (isDefined(update.status)) updated.status = update.status;
+  if (isDefined(update.rating)) updated.rating = update.rating;
+  if (isDefined(update.notes)) updated.notes = update.notes;
+
+  switch (existing.type) {
+    case "movie": {
+      const movieUpdate = update as Partial<MovieEntry>;
+      const updatedMovie = updated as MovieEntry;
+
+      if (isDefined(movieUpdate.releaseYear)) {
+        updatedMovie.releaseYear = movieUpdate.releaseYear;
+      }
+      if (isDefined(movieUpdate.director)) {
+        updatedMovie.director = movieUpdate.director;
+      }
+      break;
+    }
+
+    case "series": {
+      const seriesUpdate = update as Partial<SeriesEntry>;
+      const updatedSeries = updated as SeriesEntry;
+
+      if (isDefined(seriesUpdate.releaseYear)) {
+        updatedSeries.releaseYear = seriesUpdate.releaseYear;
+      }
+      if (isDefined(seriesUpdate.currentEpisode)) {
+        updatedSeries.currentEpisode = seriesUpdate.currentEpisode;
+      }
+      if (isDefined(seriesUpdate.currentSeason)) {
+        updatedSeries.currentSeason = seriesUpdate.currentSeason;
+      }
+      break;
+    }
+
+    case "game": {
+      const gameUpdate = update as Partial<GameEntry>;
+      const updatedGame = updated as GameEntry;
+
+      if (isDefined(gameUpdate.releaseYear)) {
+        updatedGame.releaseYear = gameUpdate.releaseYear;
+      }
+      if (isDefined(gameUpdate.platform)) {
+        updatedGame.platform = gameUpdate.platform;
+      }
+      if (isDefined(gameUpdate.playTime)) {
+        updatedGame.playTime = gameUpdate.playTime;
+      }
+      break;
+    }
+    // Something wrong must have happened to end up here.
+    default:
+      throw new Error("Type not found within mergeEntryUpdate!");
+  }
+
+  return updated;
+}

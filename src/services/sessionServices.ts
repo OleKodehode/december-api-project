@@ -1,10 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const SESSIONS_FILE = path.resolve(
-  process.cwd(),
-  "src/data/activeSessions.json"
-);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const SESSIONS_FILE = path.join(__dirname, "../data/activeSessions.json");
 
 // In-memory caching for speed
 let activeSessions: Set<string> = new Set();
@@ -14,6 +15,7 @@ try {
   const loaded = JSON.parse(data);
   activeSessions = new Set(loaded);
   console.log(`Loaded ${loaded.length} active sessions from file`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 } catch (err) {
   console.log("Couldn't find any existing session files - Starting fresh");
   activeSessions = new Set();

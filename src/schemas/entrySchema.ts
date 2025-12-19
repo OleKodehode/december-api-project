@@ -22,7 +22,7 @@ export const seriesSchema = baseSchema.extend({
 
 export const gameSchema = baseSchema.extend({
   type: z.literal("game"),
-  releaseYear: z.number().int().min(1971).nullable().optional(), // first commercial game.
+  releaseYear: z.number().int().min(1971).nullable().optional().default(null), // first commercial game.
   platform: z
     .union([z.string(), z.array(z.string())])
     .nullable()
@@ -43,29 +43,30 @@ const baseUpdateSchema = z
   .object({
     title: z.string().min(1).optional(),
     status: z.enum(["planned", "watching", "completed", "dropped"]).optional(),
-    rating: z.number().min(1).max(10).nullable().optional(),
-    notes: z.string().nullable().optional(),
+    rating: z.number().min(1).max(10).nullable().optional().default(null),
+    notes: z.string().nullable().optional().default(null),
   })
   .strict();
 
 export const movieUpdateSchema = baseUpdateSchema.extend({
-  releaseYear: z.number().int().min(1888).nullable().optional(),
-  director: z.string().nullable().optional(),
+  releaseYear: z.number().int().min(1888).nullable().optional().default(null),
+  director: z.string().nullable().optional().default(null),
 });
 
 export const seriesUpdateSchema = baseUpdateSchema.extend({
-  releaseYear: z.number().int().min(1928).nullable().optional(),
-  currentSeason: z.number().int().min(1).nullable().optional(),
-  currentEpisode: z.number().int().min(1).nullable().optional(),
+  releaseYear: z.number().int().min(1928).nullable().optional().default(null),
+  currentSeason: z.number().int().min(1).nullable().optional().default(null),
+  currentEpisode: z.number().int().min(1).nullable().optional().default(null),
 });
 
 export const gameUpdateSchema = baseUpdateSchema.extend({
-  releaseYear: z.number().int().min(1971).nullable().optional(),
+  releaseYear: z.number().int().min(1971).nullable().optional().default(null),
   platform: z
     .union([z.string(), z.array(z.string())])
     .nullable()
-    .optional(),
-  playTime: z.number().min(0).nullable().optional(),
+    .optional()
+    .default(null),
+  playTime: z.number().min(0).nullable().optional().default(null),
 });
 
 export const updateSchemas = {
