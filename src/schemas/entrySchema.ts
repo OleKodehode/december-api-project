@@ -38,3 +38,38 @@ export const CreateEntrySchema = z.discriminatedUnion("type", [
 ]);
 
 export type CreateEntryInput = z.infer<typeof CreateEntrySchema>;
+
+const baseUpdateSchema = z
+  .object({
+    title: z.string().min(1).optional(),
+    status: z.enum(["planned", "watching", "completed", "dropped"]).optional(),
+    rating: z.number().min(1).max(10).nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+  .strict();
+
+export const movieUpdateSchema = baseUpdateSchema.extend({
+  releaseYear: z.number().int().min(1888).nullable().optional(),
+  director: z.string().nullable().optional(),
+});
+
+export const seriesUpdateSchema = baseUpdateSchema.extend({
+  releaseYear: z.number().int().min(1928).nullable().optional(),
+  currentSeason: z.number().int().min(1).nullable().optional(),
+  currentEpisode: z.number().int().min(1).nullable().optional(),
+});
+
+export const gameUpdateSchema = baseUpdateSchema.extend({
+  releaseYear: z.number().int().min(1971).nullable().optional(),
+  platform: z
+    .union([z.string(), z.array(z.string())])
+    .nullable()
+    .optional(),
+  playTime: z.number().min(0).nullable().optional(),
+});
+
+export const updateSchemas = {
+  movie: movieUpdateSchema,
+  series: seriesUpdateSchema,
+  game: gameUpdateSchema,
+};

@@ -6,14 +6,7 @@ import {
   findEntryById,
 } from "../services/backlogService";
 import { requireUserId } from "../utils/authHelper";
-import { movieSchema, seriesSchema, gameSchema } from "../schemas/entrySchema";
-
-// Used for updating entries
-const partialSchemas = {
-  movie: movieSchema.partial(),
-  series: seriesSchema.partial(),
-  game: gameSchema.partial(),
-};
+import { updateSchemas } from "../schemas/entrySchema";
 
 export const listEntries = (req: Request, res: Response) => {
   const userId = requireUserId(req, res);
@@ -62,9 +55,9 @@ export const updateEntry = (req: Request, res: Response) => {
     return res.status(404).json({ message: "Entry not found" });
   }
 
-  const schema = partialSchemas[existingEntry.type];
+  const schema = updateSchemas[existingEntry.type];
   if (!schema) {
-    // Ideally shouldn't be called - unless type in partialSchemas or something happened with the DB/entry
+    // Ideally shouldn't be called
     return res.status(500).json({ message: "Invalid entry type" });
   }
 
