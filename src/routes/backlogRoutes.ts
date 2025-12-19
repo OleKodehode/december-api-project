@@ -3,6 +3,7 @@ import { authenticate } from "../middleware/auth";
 import {
   createEntry,
   deleteEntry,
+  getById,
   listEntries,
   updateEntry,
 } from "../controllers/backlogController";
@@ -16,6 +17,8 @@ const router = Router();
 router.use(authenticate);
 
 router.get("/", listEntries);
+
+router.get("/:id", getById);
 
 router.post("/", normalizeType, validateEntry(CreateEntrySchema), createEntry);
 

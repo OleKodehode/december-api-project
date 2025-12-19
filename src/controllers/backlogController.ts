@@ -27,6 +27,32 @@ export const listEntries = (req: Request, res: Response) => {
   res.status(200).json(displayEntries);
 };
 
+export const getById = (req: Request, res: Response) => {
+  const userId = requireUserId(req, res);
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: "Entry Id is required" });
+  }
+
+  const entry = findEntryById(id, userId);
+
+  if (!entry) {
+    return res.status(404).json({ message: "Entry not found" });
+  }
+
+  // Same as in listEntries
+  const displayEntry = {
+    ...entry,
+    status:
+      entry.type === "game" && entry.status === "watching"
+        ? "playing"
+        : entry.status,
+  };
+
+  return res.status(200).json(displayEntry);
+};
+
 export const createEntry = (req: Request, res: Response) => {
   const userId = requireUserId(req, res);
   const input = req.body;
