@@ -35,9 +35,6 @@ app.listen(PORT, () => {
 export default app;
 
 /*
-GET v1/backlog -> List everything in backlog.
-GET v1/backlog/:id -> Fetch the specific entry
-POST v1/backlog -> Add new item to backlog
-PATCH v1/backlog/:id -> update entry
-DELETE v1/backlog/:id -> Delete entry
+GET v1/entries/:id -> Fetch the specific entry
+DELETE v1/entries/:id -> Delete entry
 */
