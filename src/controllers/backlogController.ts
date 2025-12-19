@@ -4,6 +4,7 @@ import {
   createEntry as createEntryService,
   updateEntry as updateEntryService,
   findEntryById,
+  deleteEntry as deleteEntryService,
 } from "../services/backlogService";
 import { requireUserId } from "../utils/authHelper";
 import { updateSchemas } from "../schemas/entrySchema";
@@ -83,6 +84,23 @@ export const updateEntry = (req: Request, res: Response) => {
   };
 
   res.status(200).json(displayed);
+};
+
+export const deleteEntry = (req: Request, res: Response) => {
+  const userId = requireUserId(req, res);
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: "Entry ID required" });
+  }
+
+  const deletedEntry = deleteEntryService(id, userId);
+
+  if (!deletedEntry) {
+    return res.status(404).json({ message: "Entry not found" });
+  }
+
+  return res.status(204).send();
 };
 
 // type guard

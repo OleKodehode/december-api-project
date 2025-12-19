@@ -31,7 +31,7 @@ describe("DELETE /v1/entries/:id - Should delete a specified entry (protected)",
       .set("Authorization", `Bearer ${accessToken}`)
       .send(testEntry);
 
-    expect(createRes).toBe(201);
+    expect(createRes.status).toBe(201);
     testEntryId = createRes.body.id;
   });
 
@@ -41,7 +41,6 @@ describe("DELETE /v1/entries/:id - Should delete a specified entry (protected)",
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(deleteRes.status).toBe(204);
-    expect(deleteRes.body.message).toContain("Entry successfully deleted");
 
     // Need to verify that it's actually deleted
     const listRes = await request(app)
@@ -53,7 +52,7 @@ describe("DELETE /v1/entries/:id - Should delete a specified entry (protected)",
 
   it("should return 404 when entry does not exist", async () => {
     const deleteRes = await request(app)
-      .delete("/v1/entries/fake-id")
+      .delete("/v1/entries/00000000-0000-0000-0000-000000000000")
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(deleteRes.status).toBe(404);

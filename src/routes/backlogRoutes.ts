@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import {
   createEntry,
+  deleteEntry,
   listEntries,
   updateEntry,
 } from "../controllers/backlogController";
@@ -20,6 +21,6 @@ router.post("/", normalizeType, validateEntry(CreateEntrySchema), createEntry);
 
 router.patch("/:id", updateEntry);
 
-// DELETE later.
+router.delete("/:id", deleteEntry);
 
 export default router;
