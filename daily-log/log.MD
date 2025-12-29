@@ -56,3 +56,7 @@ Blir å prøve og sette opp Swagger eller lignende, og se over koden sånn eller
 ## 22 Desember
 
 Bortreist for jula på denne dagen. Beskjed har blitt gitt til veileder om det.
+
+## 29 Desember
+
+Utsatt for sykdom (influensa/forkjølelse) - Dårlig form
