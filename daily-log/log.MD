@@ -60,3 +60,9 @@ Bortreist for jula på denne dagen. Beskjed har blitt gitt til veileder om det.
 ## 29 Desember
 
 Utsatt for sykdom (influensa/forkjølelse) - Dårlig form
+
+## 30 Desember
+
+Endå dårlig form, litt mer fokus på hvile - Sett noe programmering og relevant videoer på youtube ihvertfall.
+
+(MongoDB hacked, prøvde å finne noen gode videoer på swagger uten stort hell, "Why nobody's creating coding tutorials anymore")
