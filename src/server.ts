@@ -15,7 +15,7 @@ const secrets = process.env.ACCESS_SECRET && process.env.REFRESH_SECRET;
 
 if (!secrets) {
   throw new Error(
-    "Secrets needed for JWT is not set - Please make a .env file with the required secrets"
+    "Secrets needed for JWT is not set - Please make a .env file with the required secrets or run 'npm run setup'"
   );
 }
 
@@ -24,7 +24,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
-app.get("/v1/health", healthRoutes);
+app.use("/v1/health", healthRoutes);
 
 app.use("/v1/auth", authRoutes);
 app.use("/v1/entries", backlogRoutes);
