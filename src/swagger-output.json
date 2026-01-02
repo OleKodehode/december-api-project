@@ -11,37 +11,51 @@
   "paths": {
     "/v1/health": {
       "get": {
-        "description": "",
+        "description": "Server status",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Status OK\nTimestamp ISO String"
+          },
+          "404": {
+            "description": "Since it's setup with localhost as of now, this shouldn't be possible to get but would be if it was an actual service running."
           }
         }
       }
     },
     "/v1/protected": {
       "get": {
-        "description": "",
+        "description": "A test route for authorization",
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "example": "Bearer <TOKEN>"
+            }
+          },
+          {
+            "name": "x-refreshtoken",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "example": "TOKEN"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Message: You are authenticated\nUser Object with UserId & SID"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - Invalid Token"
           }
         }
       }
     },
     "/v1/auth/login": {
       "post": {
-        "description": "",
+        "description": "Route to get authorized - Requires a valid username, password.\nAs of now, requires manually adding new users into userService on the server-side.",
         "parameters": [
           {
             "name": "body",
@@ -50,10 +64,10 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "any"
+                  "example": "Test"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "TestPassword123"
                 }
               }
             }
@@ -74,7 +88,7 @@
     },
     "/v1/auth/refresh": {
       "get": {
-        "description": "",
+        "description": "Refreshing of Refresh JWT. Requires a valid x-refreshtoken.",
         "parameters": [
           {
             "name": "x-refreshtoken",
@@ -94,7 +108,7 @@
     },
     "/v1/auth/logout": {
       "post": {
-        "description": "",
+        "description": "Logs out a user. Requires a valid x-refreshtoken.",
         "parameters": [
           {
             "name": "x-refreshtoken",
@@ -104,7 +118,7 @@
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "No Content (Successfully logged out)"
           },
           "401": {
             "description": "Unauthorized"
@@ -114,16 +128,34 @@
     },
     "/v1/entries/": {
       "get": {
-        "description": "",
+        "description": "Gets all entries tied to a userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "test-user-001"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "returns a JSON with backlog entries tied to a specific user."
           }
         }
       },
       "post": {
-        "description": "",
+        "description": "Adds a new entry tied to a userId",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "test-user-001"
+            }
+          },
           {
             "name": "body",
             "in": "body",
@@ -131,7 +163,13 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "example": "any"
+                  "example": "movie"
+                },
+                "title": {
+                  "example": "Test Movie"
+                },
+                "status": {
+                  "example": "planned"
                 }
               }
             }
@@ -139,7 +177,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Returns the created entry as a JSON"
           },
           "400": {
             "description": "Bad Request"
@@ -149,8 +187,16 @@
     },
     "/v1/entries/{id}": {
       "get": {
-        "description": "",
+        "description": "Returns a specific entry tied to a SID/JWT - Requires authorization of that specific SID/JWT",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "test-user-001"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -160,7 +206,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns a JSON with the specific entry"
           },
           "400": {
             "description": "Bad Request"
@@ -171,18 +217,27 @@
         }
       },
       "patch": {
-        "description": "",
+        "description": "Updates a specific entry by ID - Can only update entries tied to the same SID/JWT",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "test-user-001"
+            }
+          },
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
-          }
+          },
+          {}
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns a JSON with the updated entry"
           },
           "400": {
             "description": "Bad Request"
@@ -196,8 +251,16 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes an entry tied to your SID/JWT",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "test-user-001"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -207,7 +270,7 @@
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "No Content (Successfully deleted)"
           },
           "400": {
             "description": "Bad Request"
