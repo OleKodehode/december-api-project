@@ -2,50 +2,129 @@
   "swagger": "2.0",
   "info": {
     "version": "v1.0.0",
-    "title": "Entertainment Backlog S-T-S API",
+    "title": "Entertainment Backlog API (Service to Service)",
     "description": "A service to service API providing an Entertainment/Media backlog service"
   },
   "host": "localhost:8000",
   "basePath": "/",
   "schemes": ["http"],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Server status endpoint"
+    },
+    {
+      "name": "Authorization",
+      "description": "Endpoints related to Authorization"
+    },
+    {
+      "name": "Entries",
+      "description": "Endpoints related to main functionality of the API. Authorization Required."
+    }
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the bearer scheme.\nExample: 'Bearer {token}'"
+    },
+    "refreshToken": {
+      "type": "apiKey",
+      "name": "x-refreshtoken",
+      "in": "header",
+      "description": "Refresh token for obtaining new access tokens."
+    }
+  },
   "paths": {
     "/v1/health": {
       "get": {
+        "tags": ["Health"],
+        "summary": "Server health check",
         "description": "Server status",
         "responses": {
           "200": {
-            "description": "Status OK\nTimestamp ISO String"
+            "description": "Server is up and running",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "ok"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "example": "ISO String"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Since it's setup with localhost as of now, this shouldn't be possible to get but would be if it was an actual service running."
+            "description": "Service not found."
           }
         }
       }
     },
     "/v1/protected": {
       "get": {
-        "description": "A test route for authorization",
+        "tags": ["Authorization"],
+        "summary": "Test authentication",
+        "description": "A test endpoint to verify that JWT authentication is working properly",
+        "security": [
+          {
+            "bearerAuth": [],
+            "refreshToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Bearer token",
             "schema": {
               "type": "string",
-              "example": "Bearer <TOKEN>"
+              "example": "Bearer <ACCESS_TOKEN>"
             }
           },
           {
             "name": "x-refreshtoken",
             "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Refresh token",
             "schema": {
               "type": "string",
-              "example": "TOKEN"
+              "example": "<REFRESH_TOKEN>"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Message: You are authenticated\nUser Object with UserId & SID"
+            "description": "Successfull authentication",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "You are authenticated"
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "example": "test-user-001"
+                    },
+                    "sid": {
+                      "type": "string",
+                      "example": "session-id-123"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - Invalid Token"
