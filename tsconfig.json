@@ -42,7 +42,8 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowArbitraryExtensions": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
   "ts-node": {
     "files": true
