@@ -1,16 +1,18 @@
 # Service to Service Entertainment/Media backlog API
 
----
-
 API made as a service to service to setup and track a backlog of media entertainment (Movies, Series, Games).
 
 ### Setup
+
+---
 
 Make sure to run `npm i` and `npm run setup` before trying to run the server.
 
 `npm run setup` is optional, but a .env file is required for the server to run. It needs a PORT, ACCESS_SECRET and REFRESH_SECRET variable.
 
 ### End Points
+
+---
 
 - GET `/v1/health`
   Health check of the server
@@ -34,6 +36,8 @@ Make sure to run `npm i` and `npm run setup` before trying to run the server.
   Deletes an entry
 
 ### Scripts
+
+---
 
 - `npm run setup` -> automatic setup of .env file with needed variables. (PORT, ACCESS_SECRET, REFRESH_SECRET)
 - `npm run dev` -> Start development server with hot-reload
