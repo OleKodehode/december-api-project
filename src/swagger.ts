@@ -1,4 +1,5 @@
 import swaggerAutogen from "swagger-autogen";
+import "dotenv/config";
 
 const doc = {
   info: {
@@ -9,13 +10,9 @@ const doc = {
   },
   host: `localhost:${process.env.PORT || 8001}`,
   basePath: "/",
-  schemes: ["http", "https"],
 };
 
 const outputFile = "./swagger-output.json";
-const endpointsFiles = [
-  "src/routes/authRoutes.ts",
-  "src/routes/backlogRoutes.ts",
-];
+const endpointsFiles = ["src/server.ts"];
 
 swaggerAutogen()(outputFile, endpointsFiles, doc);

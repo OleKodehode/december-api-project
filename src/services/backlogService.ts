@@ -15,11 +15,11 @@ let entries: Entry[] = [];
 try {
   const data = readFileSync(BACKLOG_FILE, "utf8");
   entries = JSON.parse(data);
-  console.log(`Loaded ${entries.length} backlog entries`);
+  // console.log(`Loaded ${entries.length} backlog entries`);
 } catch (err) {
   const error = err as NodeJS.ErrnoException; // type assertion - To avoid err: any/unknown
   if (error.code === "ENOENT") {
-    console.log("No backlog file found - Starting with empty array");
+    // console.log("No backlog file found - Starting with empty array");
   } else {
     console.error("Error loading backlog:", err);
   }

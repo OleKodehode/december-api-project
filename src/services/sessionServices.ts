@@ -14,10 +14,10 @@ try {
   const data = readFileSync(SESSIONS_FILE, "utf8");
   const loaded = JSON.parse(data);
   activeSessions = new Set(loaded);
-  console.log(`Loaded ${loaded.length} active sessions from file`);
+  // console.log(`Loaded ${loaded.length} active sessions from file`);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 } catch (err) {
-  console.log("Couldn't find any existing session files - Starting fresh");
+  // console.log("Couldn't find any existing session files - Starting fresh");
   activeSessions = new Set();
 }
 

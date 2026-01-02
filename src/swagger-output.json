@@ -5,11 +5,41 @@
     "title": "Entertainment Backlog S-T-S API",
     "description": "A service to service API providing an Entertainment/Media backlog service"
   },
-  "host": "localhost:8001",
+  "host": "localhost:8000",
   "basePath": "/",
-  "schemes": ["http", "https"],
+  "schemes": ["http"],
   "paths": {
-    "/login": {
+    "/v1/health": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/protected": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
       "post": {
         "description": "",
         "parameters": [
@@ -42,7 +72,7 @@
         }
       }
     },
-    "/refresh": {
+    "/v1/auth/refresh": {
       "get": {
         "description": "",
         "parameters": [
@@ -62,7 +92,7 @@
         }
       }
     },
-    "/logout": {
+    "/v1/auth/logout": {
       "post": {
         "description": "",
         "parameters": [
@@ -82,7 +112,7 @@
         }
       }
     },
-    "/": {
+    "/v1/entries/": {
       "get": {
         "description": "",
         "responses": {
@@ -117,7 +147,7 @@
         }
       }
     },
-    "/{id}": {
+    "/v1/entries/{id}": {
       "get": {
         "description": "",
         "parameters": [
