@@ -54,7 +54,7 @@
                 },
                 "timestamp": {
                   "type": "string",
-                  "example": "ISO String"
+                  "format": "date-time"
                 }
               }
             }
@@ -127,25 +127,40 @@
             }
           },
           "401": {
-            "description": "Unauthorized - Invalid Token"
+            "description": "Unauthorized - Invalid Token",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Invalid or expired token"
+                }
+              }
+            }
           }
         }
       }
     },
     "/v1/auth/login": {
       "post": {
+        "tags": ["Authorization"],
+        "summary": "User login",
         "description": "Route to get authorized - Requires a valid username, password.\nAs of now, requires manually adding new users into userService on the server-side.",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
+              "required": ["username", "password"],
               "properties": {
                 "username": {
+                  "type": "string",
                   "example": "Test"
                 },
                 "password": {
+                  "type": "string",
                   "example": "TestPassword123"
                 }
               }
@@ -154,7 +169,20 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successfull Login - Provides hex tokens in body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "type": "string",
+                  "description": "JWT Access Token"
+                },
+                "refreshToken": {
+                  "type": "string",
+                  "description": "JWT Refresh Token"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -167,32 +195,59 @@
     },
     "/v1/auth/refresh": {
       "get": {
-        "description": "Refreshing of Refresh JWT. Requires a valid x-refreshtoken.",
+        "tags": ["Authorization"],
+        "summary": "Refresh access token",
+        "description": "Get a new access token using a valid refresh token.",
+        "security": [
+          {
+            "refreshToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "x-refreshtoken",
             "in": "header",
-            "type": "string"
+            "type": "string",
+            "required": true,
+            "description": "Valid refresh token"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Token refreshed successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "type": "string",
+                  "description": "New JWT Access token"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - Invalid or expired refresh token"
           }
         }
       }
     },
     "/v1/auth/logout": {
       "post": {
-        "description": "Logs out a user. Requires a valid x-refreshtoken.",
+        "tags": ["Authorization"],
+        "summary": "User logout",
+        "description": "Logs out the user and invalidates the refresh token",
+        "security": [
+          {
+            "refreshToken": []
+          }
+        ],
         "parameters": [
           {
             "name": "x-refreshtoken",
             "in": "header",
-            "type": "string"
+            "type": "string",
+            "required": true,
+            "description": "Valid refresh token"
           }
         ],
         "responses": {
@@ -200,151 +255,647 @@
             "description": "No Content (Successfully logged out)"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - Invalid or missing refresh token"
           }
         }
       }
     },
     "/v1/entries/": {
       "get": {
-        "description": "Gets all entries tied to a userId",
+        "tags": ["Entries"],
+        "summary": "Get all entries",
+        "description": "Retrieve all backlog entries for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "body",
-            "schema": {
-              "type": "string",
-              "example": "test-user-001"
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Bearer token"
           }
         ],
         "responses": {
           "200": {
-            "description": "returns a JSON with backlog entries tied to a specific user."
+            "description": "Successfully retrieved entries",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "entry-123"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "example": "test-user-001"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["movie", "series", "game"],
+                    "example": "movie"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "The Matrix"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["planned", "in-progress", "completed"],
+                    "example": "planned"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
           }
         }
       },
       "post": {
-        "description": "Adds a new entry tied to a userId",
+        "tags": ["Entries"],
+        "summary": "Create a new entry",
+        "description": "Add a new entry to the user's backlog. The entry type determines which additional fields are available:\n\n**Movie**: releaseYear (1888+), director\n\n**Series**: releaseYear (1928+), currentSeason, currentEpisode\n\n**Game**: releaseYear (1971+), platform, playTime",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "body",
-            "schema": {
-              "type": "string",
-              "example": "test-user-001"
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Bearer token"
           },
           {
             "name": "body",
             "in": "body",
+            "required": true,
+            "description": "Entry data varies based on type. See examples below for each type.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "example": "movie"
+              "oneOf": [
+                {
+                  "title": "Movie entry",
+                  "type": "object",
+                  "required": ["type", "title", "status"],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["movie"],
+                      "example": "movie"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Movie"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "planned"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 5
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1888,
+                      "nullable": true,
+                      "example": 1999
+                    },
+                    "director": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Director - Can be left empty"
+                    }
+                  }
                 },
-                "title": {
-                  "example": "Test Movie"
+                {
+                  "title": "Series Entry",
+                  "type": "object",
+                  "required": ["type", "title", "status"],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["series"],
+                      "example": "series"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Series"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "watching"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 7
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1928,
+                      "nullable": true,
+                      "example": 2010
+                    },
+                    "currentSeason": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "nullable": true,
+                      "example": 2
+                    },
+                    "currentEpisode": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "nullable": true,
+                      "example": 3
+                    }
+                  }
                 },
-                "status": {
-                  "example": "planned"
+                {
+                  "title": "Game Entry",
+                  "type": "object",
+                  "required": ["type", "title", "status"],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["game"],
+                      "example": "game"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Game"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "completed"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 8
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1971,
+                      "nullable": true,
+                      "example": 2005
+                    },
+                    "platform": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ],
+                      "nullable": true,
+                      "example": [
+                        "Nintendo Switch",
+                        "Play Station 5",
+                        "Xbox Series"
+                      ]
+                    },
+                    "playTime": {
+                      "type": "number",
+                      "minimum": 0,
+                      "nullable": true,
+                      "example": 47.5,
+                      "description": "Play time in hours"
+                    }
+                  }
                 }
-              }
+              ]
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Returns the created entry as a JSON"
+            "description": "Entry created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "entry-123"
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "test-user-001"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "movie"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Test Movie"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "planned"
+                },
+                "rating": {
+                  "type": "number",
+                  "nullable": true,
+                  "example": 6
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "Can be left empty"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Invalid or missing required fields."
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
           }
         }
       }
     },
     "/v1/entries/{id}": {
       "get": {
-        "description": "Returns a specific entry tied to a SID/JWT - Requires authorization of that specific SID/JWT",
+        "tags": ["Entries"],
+        "summary": "Get entry by ID",
+        "description": "Returns a specific entry tied to a user - Requires authorization of that specific user",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "userId",
-            "in": "body",
-            "schema": {
-              "type": "string",
-              "example": "test-user-001"
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Bearer token"
           },
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Entry ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a JSON with the specific entry"
+            "description": "Entry retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "entry-123"
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "test-user-001"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "movie"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Test Movie"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "planned"
+                },
+                "rating": {
+                  "type": "number",
+                  "nullable": true,
+                  "example": 6
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "Can be left empty"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Invalid entry ID"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found - Entry does not exist or does not belong to that user"
           }
         }
       },
       "patch": {
-        "description": "Updates a specific entry by ID - Can only update entries tied to the same SID/JWT",
+        "tags": ["Entries"],
+        "summary": "update an entry",
+        "description": "Updates a specific entry (Must belong to the authenticated user)",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "userId",
-            "in": "body",
-            "schema": {
-              "type": "string",
-              "example": "test-user-001"
-            }
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer token"
           },
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Entry ID"
           },
-          {}
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Only include fields to update. Available fields depends on the type.",
+            "schema": {
+              "oneOf": [
+                {
+                  "title": "Update movie",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Movie"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "planned"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 5
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1888,
+                      "nullable": true,
+                      "example": 1999
+                    },
+                    "director": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Director - Can be left empty"
+                    }
+                  }
+                },
+                {
+                  "title": "Update Series",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Series"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "watching"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 7
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1928,
+                      "nullable": true,
+                      "example": 2010
+                    },
+                    "currentSeason": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "nullable": true,
+                      "example": 2
+                    },
+                    "currentEpisode": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "nullable": true,
+                      "example": 3
+                    }
+                  }
+                },
+                {
+                  "title": "Update Game",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "Test Game"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["planned", "watching", "completed", "dropped"],
+                      "example": "completed"
+                    },
+                    "rating": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10,
+                      "nullable": true,
+                      "example": 8
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "Can be left empty"
+                    },
+                    "releaseYear": {
+                      "type": "integer",
+                      "minimum": 1971,
+                      "nullable": true,
+                      "example": 2005
+                    },
+                    "platform": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ],
+                      "nullable": true,
+                      "example": [
+                        "Nintendo Switch",
+                        "Play Station 5",
+                        "Xbox Series"
+                      ]
+                    },
+                    "playTime": {
+                      "type": "number",
+                      "minimum": 0,
+                      "nullable": true,
+                      "example": 47.5,
+                      "description": "Play time in hours"
+                    }
+                  }
+                }
+              ]
+            }
+          }
         ],
         "responses": {
           "200": {
-            "description": "Returns a JSON with the updated entry"
+            "description": "Entry updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "userId": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "rating": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Invalid data or unexpected fields."
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - Invalid or missing token"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found - Entry does not exist or does not belong to that user"
           }
         }
       },
       "delete": {
-        "description": "Deletes an entry tied to your SID/JWT",
+        "tags": ["Entries"],
+        "summary": "Delete entry",
+        "description": "Delete a specific backlog entry (must belond to authenticated user)",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "userId",
-            "in": "body",
-            "schema": {
-              "type": "string",
-              "example": "test-user-001"
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "description": "Bearer token"
           },
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Entry ID"
           }
         ],
         "responses": {
@@ -352,10 +903,13 @@
             "description": "No Content (Successfully deleted)"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Invalid entry ID"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found - Entry does not exist or does not belong to that user"
           }
         }
       }
