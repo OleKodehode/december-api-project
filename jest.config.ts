@@ -1,3 +1,4 @@
+import "ts-node/register";
 import type { Config } from "jest";
 import { createDefaultEsmPreset } from "ts-jest";
 
