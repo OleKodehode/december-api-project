@@ -6,6 +6,8 @@ const defaultEsmPreset = createDefaultEsmPreset();
 const config: Config = {
   ...defaultEsmPreset,
   testEnvironment: "node",
+  extensionsToTreatAsEsm: [".ts"],
+  globalTeardown: "<rootDir>/src/utils/globalTeardown.ts",
 };
 
 export default config;
