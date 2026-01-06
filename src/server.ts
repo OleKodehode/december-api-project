@@ -5,18 +5,18 @@ import authRoutes from "./routes/authRoutes";
 import backlogRoutes from "./routes/backlogRoutes";
 import healthRoutes from "./routes/healthRoutes";
 import { authenticate } from "./middleware/auth";
-import swaggerUi from "swagger-ui-express";
-import path from "node:path";
+import { serve, setup } from "swagger-ui-express";
+import { join, dirname } from "node:path";
 import { readFileSync } from "node:fs";
-import YAML from "yaml";
+import { parse } from "yaml";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const filePath = path.join(__dirname, "swagger.yaml");
+const filePath = join(__dirname, "swagger.yaml");
 const fileContent = readFileSync(filePath, "utf8");
-const swaggerDocument = YAML.parse(fileContent);
+const swaggerDocument = parse(fileContent);
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8001;
@@ -43,10 +43,12 @@ app.get("/v1/protected", authenticate, (req: Request, res: Response) => {
   res.json({ message: "You are authenticated", user: req.user });
 });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", serve, setup(swaggerDocument));
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}/api-docs`);
+  if (!process.env.JEST_WORKER_ID) {
+    console.log(`Server running on http://localhost:${PORT}/api-docs`);
+  }
 });
 
 export default app;
