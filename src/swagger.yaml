@@ -2,6 +2,7 @@ openapi: 3.1.0
 info:
   title: Entertainment Backlog API (Service to Service)
   version: v1.0.0
+  description: a service to service API for making a backlog of entertainment a user wants to eventually consume, be it movies, series or games.
 servers:
   - url: http://localhost:8000
     description: Local development server
@@ -14,279 +15,16 @@ tags:
   - name: Entries
     description: Endpoints related to main functionality of the API. Authorization required.
 
-paths:
-  /v1/health:
-    get:
-      tags: [Health]
-      summary: Server health check
-      description: Server status
-      responses:
-        "200":
-          description: Server is up and running
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                  timestamp:
-                    type: string
-                    format: date-time
-        "404":
-          description: Service not found
-
-  /v1/protected:
-    get:
-      tags: [Authorization]
-      summary: Test authentication
-      description: A test endpoint to verify that JWT authentication is working properly
-      security:
-        - bearerAuth: []
-          refreshToken: []
-      responses:
-        "200":
-          description: Successful authentication
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: You are authenticated
-                  user:
-                    type: object
-                    properties:
-                      userId:
-                        type: string
-                        example: test-user-001
-                      sid:
-                        type: string
-                        example: session-id-123
-        "401":
-          description: Unauthorized - Invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid or expired token
-
-  /v1/auth/login:
-    post:
-      tags: [Authorization]
-      summary: User login
-      description: Route to get authorized - Requires a valid username and password.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - username
-                - password
-              properties:
-                username:
-                  type: string
-                  example: Test
-                password:
-                  type: string
-                  example: TestPassword123
-      responses:
-        "200":
-          description: Successful login - Provides tokens
-          content:
-            application/json:
-              scehma:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    description: JWT Access token
-                  refreshToken:
-                    type: string
-                    description: JWT Refresh token
-        "400":
-          description: Bad request
-        "401":
-          description: Unauthorized
-
-  /v1/auth/refresh:
-    get:
-      tags: [Authorization]
-      summary: Refresh access token
-      description: Get a new access token using a valid refresh token
-      security:
-        - refreshToken: []
-      responses:
-        "200":
-          description: Token refreshed successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    description: new JWT Access token
-        "401":
-          description: Unauthorized - Invalid or expired refresh token
-  /v1/auth/logout:
-    post:
-      tags: [Authorization]
-      summary: User logout
-      description: Logs out the user and invalidates the refresh token
-      security:
-        - refreshToken: []
-      responses:
-        "204":
-          description: successfully logged out ("no content")
-        "401":
-          description: Unauthorized - Invalid or missing refresh token
-
-  /v1/entries:
-    get:
-      tags: [Entries]
-      summary: Get all entries
-      description: Retrieve all backlog entries for the authenticated user
-      security:
-        - bearerAuth: []
-      responses:
-        "200":
-          description: Successfully retrieved entries
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EntryResponse"
-        "401":
-          description: Unauthorized - Invalid or missing token
-
-    post:
-      tags: [Entries]
-      summary: Create a new entry
-      description: Add a new entry to the user's backlog. The entry type determines which additional fields are available
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateEntryRequest"
-      responses:
-        "201":
-          description: Entry created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EntryResponse"
-        "400":
-          description: Bad Request - Invalid or missing required fields
-        "401":
-          description: Unauthorized - Invalid or missing token
-
-  /v1/entries/{id}:
-    get:
-      tags: [Entries]
-      summary: Get entry by ID
-      description: Returns a specific entry tied to the authenticated user
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Entry ID
-      responses:
-        "200":
-          description: Entry retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EntryResponse"
-        "400":
-          description: Bad Request - Invalid entry ID
-        "401":
-          description: Unauthorized - Invalid or missing token
-        "404":
-          description: Not found - Entry does not exist or does not belong to the user
-
-    patch:
-      tags: [Entries]
-      summary: Update an entry
-      description: Updates a specific entry (Must belong to the authenticated user). Only include fields you want to update.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Entry ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateEntryRequest"
-      responses:
-        "200":
-          description: Entry updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EntryResponse"
-        "400":
-          description: Bad Reques - Invalid data or unexpected fields
-        "401":
-          description: Unauthorized - Invalid or missing token
-        "404":
-          description: Not found - Entry does not exist or does not belong to the user
-
-    delete:
-      tags: [Entries]
-      summary: Delete an entry
-      description: Deletes a specific baclog entry (Must belong to the authenticated user)
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Entry ID
-      responses:
-        "204":
-          description: Successfully deleted ("no content")
-        "400":
-          description: Bad request - Invalid entry ID
-        "401":
-          description: Unauthorized - Invalid or missing token
-        "404":
-          description: Not found - Entry does not exist or does not belong to the user
-
 components:
-  securitySchemas:
+  securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: JWT Authorization header using the bearer scheme. Example "Bearer {token}"
-
     refreshToken:
       type: apiKey
       in: header
-      name: x-refreshToken
+      name: x-refreshtoken
       description: Refresh token for obtaining new access tokens.
 
   schemas:
@@ -573,3 +311,265 @@ components:
         - $ref: "#/components/schemas/MovieUpdate"
         - $ref: "#/components/schemas/SeriesUpdate"
         - $ref: "#/components/schemas/GameUpdate"
+
+paths:
+  /v1/health:
+    get:
+      tags: [Health]
+      summary: Server health check
+      description: Server status
+      responses:
+        "200":
+          description: Server is up and running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+        "404":
+          description: Service not found
+
+  /v1/protected:
+    get:
+      tags: [Authorization]
+      summary: Test authentication
+      description: A test endpoint to verify that JWT authentication is working properly
+      security:
+        - bearerAuth: []
+          refreshToken: []
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You are authenticated
+                  user:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        example: test-user-001
+                      sid:
+                        type: string
+                        example: session-id-123
+        "401":
+          description: Unauthorized - Invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid or expired token
+
+  /v1/auth/login:
+    post:
+      tags: [Authorization]
+      summary: User login
+      description: Route to get authorized - Requires a valid username and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: Test
+                password:
+                  type: string
+                  example: TestPassword123
+      responses:
+        "200":
+          description: Successful login - Provides tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: JWT Access token
+                  refreshToken:
+                    type: string
+                    description: JWT Refresh token
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+
+  /v1/auth/refresh:
+    get:
+      tags: [Authorization]
+      summary: Refresh access token
+      description: Get a new access token using a valid refresh token
+      security:
+        - refreshToken: []
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: new JWT Access token
+        "401":
+          description: Unauthorized - Invalid or expired refresh token
+  /v1/auth/logout:
+    post:
+      tags: [Authorization]
+      summary: User logout
+      description: Logs out the user and invalidates the refresh token
+      security:
+        - refreshToken: []
+      responses:
+        "204":
+          description: successfully logged out ("no content")
+        "401":
+          description: Unauthorized - Invalid or missing refresh token
+
+  /v1/entries:
+    get:
+      tags: [Entries]
+      summary: Get all entries
+      description: Retrieve all backlog entries for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntryResponse"
+        "401":
+          description: Unauthorized - Invalid or missing token
+
+    post:
+      tags: [Entries]
+      summary: Create a new entry
+      description: Add a new entry to the user's backlog. The entry type determines which additional fields are available
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEntryRequest"
+      responses:
+        "201":
+          description: Entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        "400":
+          description: Bad Request - Invalid or missing required fields
+        "401":
+          description: Unauthorized - Invalid or missing token
+
+  /v1/entries/{id}:
+    get:
+      tags: [Entries]
+      summary: Get entry by ID
+      description: Returns a specific entry tied to the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Entry ID
+      responses:
+        "200":
+          description: Entry retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        "400":
+          description: Bad Request - Invalid entry ID
+        "401":
+          description: Unauthorized - Invalid or missing token
+        "404":
+          description: Not found - Entry does not exist or does not belong to the user
+
+    patch:
+      tags: [Entries]
+      summary: Update an entry
+      description: Updates a specific entry (Must belong to the authenticated user). Only include fields you want to update.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Entry ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEntryRequest"
+      responses:
+        "200":
+          description: Entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        "400":
+          description: Bad Request - Invalid data or unexpected fields
+        "401":
+          description: Unauthorized - Invalid or missing token
+        "404":
+          description: Not found - Entry does not exist or does not belong to the user
+
+    delete:
+      tags: [Entries]
+      summary: Delete an entry
+      description: Deletes a specific backlog entry (Must belong to the authenticated user)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Entry ID
+      responses:
+        "204":
+          description: Successfully deleted ("no content")
+        "400":
+          description: Bad request - Invalid entry ID
+        "401":
+          description: Unauthorized - Invalid or missing token
+        "404":
+          description: Not found - Entry does not exist or does not belong to the user
