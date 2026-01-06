@@ -46,6 +46,7 @@ app.get("/v1/protected", authenticate, (req: Request, res: Response) => {
 app.use("/api-docs", serve, setup(swaggerDocument));
 
 app.listen(PORT, () => {
+  // remove console log within jest testing
   if (!process.env.JEST_WORKER_ID) {
     console.log(`Server running on http://localhost:${PORT}/api-docs`);
   }
