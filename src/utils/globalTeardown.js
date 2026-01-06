@@ -1,5 +1,5 @@
-import { clearAllSessions } from "../services/sessionServices";
-import { clearAllEntries } from "../services/backlogService";
+import { clearAllSessions } from "../services/sessionServices.ts";
+import { clearAllEntries } from "../services/backlogService.ts";
 
 export default function globalTeardown() {
   clearAllSessions();

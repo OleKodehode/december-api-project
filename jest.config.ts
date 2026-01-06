@@ -1,4 +1,3 @@
-import "ts-node/register";
 import type { Config } from "jest";
 import { createDefaultEsmPreset } from "ts-jest";
 
@@ -8,7 +7,7 @@ const config: Config = {
   ...defaultEsmPreset,
   testEnvironment: "node",
   extensionsToTreatAsEsm: [".ts"],
-  globalTeardown: "<rootDir>/src/utils/globalTeardown.ts",
+  globalTeardown: "<rootDir>/src/utils/globalTeardown.js",
 };
 
 export default config;
