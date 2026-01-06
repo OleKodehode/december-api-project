@@ -13,16 +13,7 @@ import type { Entry, GameEntry, MovieEntry, SeriesEntry } from "../types/entry";
 export const listEntries = (req: Request, res: Response) => {
   const userId = requireUserId(req, res);
   const userEntries = getUserEntries(userId);
-
-  // Display "playing" instead of "watching" for games
-  // Everything is "watching" in the back to keep it consistent
-  const displayEntries = userEntries.map((entry) => ({
-    ...entry,
-    status:
-      entry.type === "game" && entry.status == "watching"
-        ? "playing"
-        : entry.status,
-  }));
+  const displayEntries = userEntries.map((entry) => entry);
 
   res.status(200).json(displayEntries);
 };
@@ -41,16 +32,7 @@ export const getById = (req: Request, res: Response) => {
     return res.status(404).json({ message: "Entry not found" });
   }
 
-  // Same as in listEntries
-  const displayEntry = {
-    ...entry,
-    status:
-      entry.type === "game" && entry.status === "watching"
-        ? "playing"
-        : entry.status,
-  };
-
-  return res.status(200).json(displayEntry);
+  return res.status(200).json(entry);
 };
 
 export const createEntry = (req: Request, res: Response) => {
@@ -58,16 +40,7 @@ export const createEntry = (req: Request, res: Response) => {
   const input = req.body;
   const entry = createEntryService(input, userId);
 
-  // display games as playing instead of watching
-  const displayedEntry = {
-    ...entry,
-    status:
-      entry.type === "game" && entry.status === "watching"
-        ? "playing"
-        : entry.status,
-  };
-
-  res.status(201).json(displayedEntry);
+  res.status(201).json(entry);
 };
 
 export const updateEntry = (req: Request, res: Response) => {
@@ -101,15 +74,7 @@ export const updateEntry = (req: Request, res: Response) => {
     return res.status(404).json({ message: "Entry not found" }); // Shouldn't happen but you never know
   }
 
-  const displayed = {
-    ...updated,
-    status:
-      updated.type === "game" && updated.status === "watching"
-        ? "playing"
-        : updated.status,
-  };
-
-  res.status(200).json(displayed);
+  res.status(200).json(updated);
 };
 
 export const deleteEntry = (req: Request, res: Response) => {

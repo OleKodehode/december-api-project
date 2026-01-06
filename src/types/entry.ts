@@ -1,6 +1,6 @@
 export type EntryType = "movie" | "series" | "game";
 
-export type Status = "planned" | "watching" | "completed" | "dropped";
+export type Status = "planned" | "in-progress" | "completed" | "dropped";
 
 // optional fields will be filled with null by zod.
 export interface BaseEntry {

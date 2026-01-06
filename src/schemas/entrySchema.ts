@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const baseSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  status: z.enum(["planned", "watching", "completed", "dropped"]),
+  status: z.enum(["planned", "in-progress", "completed", "dropped"]),
   rating: z.number().min(1).max(10).nullable().optional().default(null),
   notes: z.string().nullable().optional().default(null),
 });
@@ -42,7 +42,9 @@ export type CreateEntryInput = z.infer<typeof CreateEntrySchema>;
 const baseUpdateSchema = z
   .object({
     title: z.string().min(1).optional(),
-    status: z.enum(["planned", "watching", "completed", "dropped"]).optional(),
+    status: z
+      .enum(["planned", "in-progress", "completed", "dropped"])
+      .optional(),
     rating: z.number().min(1).max(10).nullable().optional().default(null),
     notes: z.string().nullable().optional().default(null),
   })

@@ -49,11 +49,11 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
     expect(listRes.body[0].title).toBe(movieEntry.title);
   });
 
-  it("should show games as playing instead of watching", async () => {
+  it("should show status as 'in-progress' ", async () => {
     const gameEntry = {
       type: "game",
       title: "Escape from Tarkov",
-      status: "watching",
+      status: "in-progress",
       releaseYear: 2015,
       platform: "PC",
     };
@@ -64,7 +64,7 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
       .send(gameEntry);
 
     expect(res.status).toBe(201);
-    expect(res.body.status).toBe("playing");
+    expect(res.body.status).toBe("in-progress");
 
     const listRes = await request(app)
       .get("/v1/entries")
@@ -77,7 +77,7 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
   it("should return 401 without authentication", async () => {
     const res = await request(app)
       .post("/v1/entries")
-      .send({ type: "movie", title: "test", status: "watching" });
+      .send({ type: "movie", title: "test", status: "in-progress" });
 
     expect(res.status).toBe(401);
   });
@@ -101,7 +101,7 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
     const caseEntry = {
       type: "MOVIE",
       title: "Test Movie",
-      status: "watching",
+      status: "in-progress",
     };
 
     const res = await request(app)
@@ -117,7 +117,7 @@ describe("POST /v1/entries - Create a new entry (protected)", () => {
     const invalidEntry = {
       type: "boardgame",
       title: "Monopoly",
-      status: "watching",
+      status: "in-progress",
     };
 
     const res = await request(app)

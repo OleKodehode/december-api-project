@@ -71,7 +71,7 @@ describe("GET /v1/entries/:id - Retrieve a single entry (protected)", () => {
       .send({
         type: "game",
         title: "Other User's Game",
-        status: "watching",
+        status: "in-progress",
       });
 
     const otherEntryId = otherEntryRes.body.id;
@@ -85,14 +85,14 @@ describe("GET /v1/entries/:id - Retrieve a single entry (protected)", () => {
   });
 
   // Redudancy test - Already tested in create but just in case.
-  it("should display game status as 'playing' instead of 'watching'", async () => {
+  it("should show status as 'in-progress'", async () => {
     const gameRes = await request(app)
       .post("/v1/entries")
       .set("Authorization", `Bearer ${accessToken}`)
       .send({
         type: "game",
         title: "Megabonk",
-        status: "watching",
+        status: "in-progress",
         playTime: 35,
       });
 
@@ -103,6 +103,6 @@ describe("GET /v1/entries/:id - Retrieve a single entry (protected)", () => {
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe("playing"); // games should be displayed as playing instead of watching
+    expect(res.body.status).toBe("in-progress");
   });
 });

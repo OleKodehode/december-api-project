@@ -72,7 +72,7 @@ describe("PATCH /v1/entries/:id - Partial update (protected)", () => {
     );
   });
 
-  it("should allow changing status to watching on a game and displays it as playing", async () => {
+  it("should allow changing status to be in-progress", async () => {
     const gameRes = await request(app)
       .post("/v1/entries")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -87,9 +87,9 @@ describe("PATCH /v1/entries/:id - Partial update (protected)", () => {
     const patchRes = await request(app)
       .patch(`/v1/entries/${gameId}`)
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({ status: "watching" });
+      .send({ status: "in-progress" });
 
     expect(patchRes.status).toBe(200);
-    expect(patchRes.body.status).toBe("playing");
+    expect(patchRes.body.status).toBe("in-progress");
   });
 });

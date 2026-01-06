@@ -79,7 +79,7 @@ describe("DELETE /v1/entries/:id - Should delete a specified entry (protected)",
       .send({
         type: "game",
         title: "Other User's Game",
-        status: "watching",
+        status: "in-progress",
       });
 
     const otherEntryId = otherEntryRes.body.id;

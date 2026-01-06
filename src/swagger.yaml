@@ -308,7 +308,7 @@ components:
           example: Test movie
         status:
           type: string
-          enum: [planned, watching, completed, dropped]
+          enum: [planned, in-progress, completed, dropped]
           example: planned
         rating:
           type: number

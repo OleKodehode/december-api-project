@@ -41,7 +41,7 @@ describe("GET /v1/entries - List a user's entries (Protected)", () => {
       expect(entry.userId).toBe(testUser.expectedUserId);
       expect(entry.title).toBeDefined();
       expect(["movie", "series", "game"]).toContain(entry.type);
-      expect(["planned", "watching", "completed", "dropped"]).toContain(
+      expect(["planned", "in-progress", "completed", "dropped"]).toContain(
         entry.status
       );
     });
