@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { writeFileSync, existsSync } from "node:fs";
 
 try {
   if (existsSync(".env")) {
