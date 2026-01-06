@@ -4,7 +4,9 @@ const users = new Map<string, { password: string; userId: string }>();
 /*
 Obviously in a real project this wouldn't be handled like this.
 In a real project it would most likely be a proper database, with hashing and salting of the passwords.
-If I have time I might try it.s
+If I have time I might try it.
+
+For now - Manually adding new users as needed. Though this will never be "safe", as it's plain text and available in a public repo. 
 */
 users.set("Test", { password: "TestPassword123", userId: "test-user-001" });
 users.set("Bob", { password: "BillyBob342", userId: "test-user-002" });

@@ -4,14 +4,14 @@ export type Status = "planned" | "in-progress" | "completed" | "dropped";
 
 // optional fields will be filled with null by zod.
 export interface BaseEntry {
-  id: string;
-  title: string;
-  type: EntryType;
-  status: Status;
+  id: string; // UUIDV4
+  title: string; // minimum length of 1
+  type: EntryType; // entry type above
+  status: Status; // enum above
   rating?: number | null; // 1-10 or null if not rated (yet)
   notes?: string | null; // if the user wants to add notes to an entry - Optional
   userId: string;
-  createdAt: string; // ISO string
+  createdAt: string; // ISO date string
   updatedAt: string; // ^
 }
 

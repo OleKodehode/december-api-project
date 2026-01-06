@@ -1,11 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const SESSIONS_FILE = path.join(__dirname, "../data/activeSessions.json");
+const SESSIONS_FILE = join(__dirname, "../data/activeSessions.json");
 
 // In-memory caching for speed
 let activeSessions: Set<string> = new Set();

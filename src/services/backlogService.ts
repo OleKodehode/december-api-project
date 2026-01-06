@@ -1,14 +1,14 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { dirname, join } from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import { type Entry } from "../types/entry";
 import type { CreateEntryInput } from "../schemas/entrySchema";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const BACKLOG_FILE = path.join(__dirname, "../data/backlog.json");
+const BACKLOG_FILE = join(__dirname, "../data/backlog.json");
 
 let entries: Entry[] = [];
 

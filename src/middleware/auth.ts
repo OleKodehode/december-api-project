@@ -34,6 +34,7 @@ export const authenticate = (
 
     req.user = { userId: payload.userId, sid: payload.sid };
     next();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }

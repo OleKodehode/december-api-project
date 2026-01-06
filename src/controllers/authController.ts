@@ -53,6 +53,7 @@ export const handleRefresh = (req: Request, res: Response) => {
     );
 
     res.status(200).json({ accessToken: newAccessToken });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     res.status(401).json({ message: "Invalid refresh token" });
   }
@@ -69,6 +70,7 @@ export const handleLogout = (req: Request, res: Response) => {
     const payload = verifyRefreshToken(refreshToken);
     removeSession(payload.sid);
     res.status(204).send();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }
