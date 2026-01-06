@@ -47,3 +47,15 @@ Make sure to run `npm i` and `npm run setup` before trying to run the server.
 - `npm run format` -> Format code with Prettier
 - `npm run build` -> Compile to JavaScript
 - `npm start` -> Run compiled version
+
+### Swagger
+
+---
+
+Swagger UI is available, at least for localhost. `http://localhost:8000/api-docs`
+
+Runs with OpenAPI 3.1.
+
+In theory it should probably work when ran on a server, letting others test the end points (where the health end point makes more sense). 
+
+Probably needs some more configuration before being ran on an actual server however.
