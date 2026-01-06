@@ -6,7 +6,17 @@ import backlogRoutes from "./routes/backlogRoutes";
 import healthRoutes from "./routes/healthRoutes";
 import { authenticate } from "./middleware/auth";
 import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "./swagger-output.json";
+import path from "node:path";
+import { readFileSync } from "node:fs";
+import YAML from "yaml";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const filePath = path.join(__dirname, "swagger.yaml");
+const fileContent = readFileSync(filePath, "utf8");
+const swaggerDocument = YAML.parse(fileContent);
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8001;
