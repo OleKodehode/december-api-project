@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { v4 as uuidv4 } from "uuid";
-import { type Entry } from "../types/entry";
+import type { Entry } from "../types/entry";
 import type { CreateEntryInput } from "../schemas/entrySchema";
 import { fileURLToPath } from "node:url";
 

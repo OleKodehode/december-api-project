@@ -7,7 +7,7 @@ const config: Config = {
   ...defaultEsmPreset,
   testEnvironment: "node",
   extensionsToTreatAsEsm: [".ts"],
-  globalTeardown: "<rootDir>/src/utils/globalTeardown.js",
+  globalTeardown: "<rootDir>/src/utils/globalTeardown.mjs",
 };
 
 export default config;
